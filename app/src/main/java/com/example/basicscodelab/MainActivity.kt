@@ -45,7 +45,42 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun MyApp(
+fun MyApp(modifier: Modifier = Modifier) {
+//    shouldShowOnboarding 使用的是 by 关键字，而不是 =。这是一个属性委托，可让您无需每次都输入 .value
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    Surface(modifier) {
+        if (shouldShowOnboarding) {
+            OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
+        } else {
+            Greetings()
+        }
+    }
+}
+
+@Composable
+fun OnboardingScreen(
+    onContinueClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Welcome to the Basics Codelab!")
+        Button(
+            modifier = Modifier.padding(vertical = 24.dp),
+            onClick = onContinueClicked
+        ) {
+            Text("Continue")
+        }
+    }
+}
+
+@Composable
+private fun Greetings(
     modifier: Modifier = Modifier,
     names: List<String> = listOf("World", "Compose")
 ) {
@@ -107,32 +142,11 @@ fun DefaultPreview() {
     }
 }
 
-@Composable
-fun OnboardingScreen(modifier: Modifier = Modifier) {
-    // TODO: This state should be hoisted
-//    shouldShowOnboarding 使用的是 by 关键字，而不是 =。这是一个属性委托，可让您无需每次都输入 .value
-    var shouldShowOnboarding by remember { mutableStateOf(true) }
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Welcome to the Basics Codelab!")
-        Button(
-            modifier = Modifier.padding(vertical = 24.dp),
-            onClick = { shouldShowOnboarding = false }
-        ) {
-            Text("Continue")
-        }
-    }
-}
-
 @Preview(showBackground = true, widthDp = 320, heightDp = 320)
 @Composable
 fun OnboardingPreview() {
     BasicsCodelabTheme {
-        OnboardingScreen()
+        OnboardingScreen(onContinueClicked = {})
     }
 }
 
